@@ -11,24 +11,18 @@ def json_response(func):
         return response
     return wrapper
 
+bp = Blueprint('api', __name__)
 
-api_routes = Blueprint('api', __name__)
+@bp.route('/users', methods=['GET'])
+@json_response
+def get_users_route():
+    users = get_users()
+    return {'users': users}
 
-@api_routes.route('/api/v1/hello', methods=['GET'])
-def hello():
-    return 'Hello, World!'
- 
-from flask import Flask
-from api import api_routes
-from my_decorators import json_response  # 导入自定义的装饰器函数
-
-app = Flask(__name__)
-app.register_blueprint(api_routes)
-
-@app.route('/api/v1/myapi', methods=['POST'])
-@json_response  # 应用json_response装饰器
-def my_api():
+@bp.route('/users', methods=['POST'])
+@json_response
+def create_user_route():
     data = request.get_json()
-    # 在这里执行您的API代码，使用传递的参数（data变量）
-    result = {"message": "Your API was called successfully!"}
-    return result  # 返回结果，将由装饰器转换为JSON格式响应
+    user = create_user(data)
+    return {'user': user}
+
